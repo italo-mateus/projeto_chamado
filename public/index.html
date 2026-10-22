@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ResolveOS - Sistema de Gerenciamento de Chamados</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232563eb'><path d='M12 15a3 3 0 100-6 3 3 0 000 6z'/><path fill-rule='evenodd' d='M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z' clip-rule='evenodd'/></svg>" />
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+            },
+            dark: {
+              bg: '#0c121e',       // Deepest background
+              sidebar: '#0f172a',  // Sidebar background
+              card: '#162032',     // Cards and containers
+              cardHover: '#1c283f',
+              border: '#24334a',   // Subtle borders
+              input: '#121a28',    // Inputs
+              tableHeader: '#141c2c',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body class="bg-dark-bg text-slate-100 font-sans antialiased min-h-screen selection:bg-brand-600 selection:text-white">
+
+  <!-- ======================================================== -->
+  <!-- 1. AUTHENTICATION SCREENS (LOGIN / REGISTRO / RECUPERAÇÃO) -->
+  <!-- ======================================================== -->
+  <div id="authSection" class="relative min-h-screen flex items-center justify-center p-4 bg-dark-bg overflow-hidden">
+    <!-- Ambient background glows -->
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-indigo-600/15 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="relative w-full max-w-md z-10">
+      <!-- Brand Header -->
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center gap-3 mb-2">
+          <div class="w-12 h-12 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-500 shadow-lg shadow-blue-600/20">
+            <!-- ResolveOS Gear / Wrench Icon -->
+            <svg class="w-7 h-7 fill-current" viewBox="0 0 24 24">
+              <path d="M12 1a3 3 0 0 0-3 3v.2a7.02 7.02 0 0 0-2.3 1.3l-.2-.1a3 3 0 0 0-4.2 4.2l.1.2A7.02 7.02 0 0 0 1.1 12H1a3 3 0 0 0 0 6h.1a7.02 7.02 0 0 0 1.3 2.3l-.1.2a3 3 0 0 0 4.2 4.2l.2-.1a7.02 7.02 0 0 0 2.3 1.3v.1a3 3 0 0 0 6 0v-.1a7.02 7.02 0 0 0 2.3-1.3l.2.1a3 3 0 0 0 4.2-4.2l-.1-.2a7.02 7.02 0 0 0 1.3-2.3H23a3 3 0 0 0 0-6h-.1a7.02 7.02 0 0 0-1.3-2.3l.1-.2a3 3 0 0 0-4.2-4.2l-.2.1A7.02 7.02 0 0 0 15 4.2V4a3 3 0 0 0-3-3zm0 7a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/>
+            </svg>
+          </div>
+          <span class="text-3xl font-extrabold tracking-tight text-white flex items-center">
+            Resolve<span class="text-blue-500">OS</span>
+          </span>
+        </div>
+        <p class="text-sm text-slate-400">Sistema Inteligente de Gerenciamento de Chamados</p>
+      </div>
+
+      <!-- Main Auth Card -->
+      <div class="bg-dark-card/90 backdrop-blur-xl border border-dark-border rounded-2xl shadow-2xl p-6 sm:p-8">
+        <!-- Auth Tabs Switcher -->
+        <div class="flex border-b border-dark-border mb-6">
+          <button id="tabBtnLogin" onclick="Auth.showTab('login')" class="flex-1 pb-3 text-sm font-semibold text-blue-500 border-b-2 border-blue-500 transition-colors">
+            Fazer Login
+          </button>
+          <button id="tabBtnRegister" onclick="Auth.showTab('register')" class="flex-1 pb-3 text-sm font-medium text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition-colors">
+            Cadastrar
+          </button>
+          <button id="tabBtnForgot" onclick="Auth.showTab('forgot')" class="flex-1 pb-3 text-sm font-medium text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition-colors">
+            Esqueci Senha
+          </button>
+        </div>
+
+        <!-- Alert Notification Box -->
+        <div id="authAlert" class="hidden mb-5 p-3.5 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2.5"></div>
+
+        <!-- TAB 1: LOGIN FORM -->
+        <form id="formLogin" onsubmit="Auth.handleLogin(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Usuário ou E-mail</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
+                <i data-lucide="user" class="w-4 h-4"></i>
+              </span>
+              <input type="text" id="loginIdentifier" required placeholder="admin ou admin@resolveos.com"
+                class="w-full pl-10 pr-4 py-2.5 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all" />
+            </div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">Senha</label>
+              <button type="button" onclick="Auth.showTab('forgot')" class="text-xs text-blue-400 hover:text-blue-300 hover:underline">
+                Esqueci minha senha
+              </button>
+            </div>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
+                <i data-lucide="lock" class="w-4 h-4"></i>
+              </span>
+              <input type="password" id="loginPassword" required placeholder="Digite sua senha (ex: 123)"
+                class="w-full pl-10 pr-10 py-2.5 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all" />
+              <button type="button" onclick="Auth.togglePasswordVisibility('loginPassword', this)" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-500 hover:text-slate-300">
+                <i data-lucide="eye" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-1">
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input type="checkbox" id="loginRemember" checked class="w-4 h-4 rounded bg-dark-input border-dark-border text-blue-600 focus:ring-0 focus:ring-offset-0" />
+              <span class="text-xs text-slate-400">Lembrar neste navegador</span>
+            </label>
+          </div>
+
+          <button type="submit" id="btnLoginSubmit" class="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl text-sm transition duration-150 flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30">
+            <span>Acessar o ResolveOS</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+
+          <!-- Super Admin Quick Fill Helper -->
+          <div class="pt-4 border-t border-dark-border/60">
+            <div class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-3 flex items-center justify-between">
+              <div class="text-xs text-slate-300">
+                <span class="font-bold text-blue-400 flex items-center gap-1.5">
+                  <i data-lucide="shield-check" class="w-3.5 h-3.5 text-blue-400"></i>
+                  Super Admin Padrão
+                </span>
+                <span class="text-[11px] text-slate-400 block mt-0.5">Usuário: <code class="text-blue-300">admin</code> | Senha: <code class="text-blue-300">123</code></span>
+              </div>
+              <button type="button" onclick="Auth.fillAdminCredentials()" class="px-2.5 py-1 text-xs bg-blue-600/30 hover:bg-blue-600 text-blue-300 hover:text-white rounded-lg transition-colors font-medium">
+                Preencher
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <!-- TAB 2: REGISTER FORM -->
+        <form id="formRegister" onsubmit="Auth.handleRegister(event)" class="hidden space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Nome Completo *</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
+                <i data-lucide="user" class="w-4 h-4"></i>
+              </span>
+              <input type="text" id="regName" required placeholder="Ex: Roberto Dias"
+                class="w-full pl-10 pr-4 py-2.5 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">E-mail Corporativo *</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
+                <i data-lucide="mail" class="w-4 h-4"></i>
+              </span>
+              <input type="email" id="regEmail" required placeholder="exemplo@empresa.com"
+                class="w-full pl-10 pr-4 py-2.5 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Departamento</label>
+              <select id="regDept" class="w-full px-3 py-2.5 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100 focus:outline-none focus:border-blue-500 transition-all">
+                <option value="RH">Recursos Humanos (RH)</option>
+                <option value="Financeiro">Financeiro</option>
+                <option value="Vendas">Vendas / Comercial</option>
+                <option value="Marketing">Marketing</option>
+                <option value="TI">Tecnologia da Informação</option>
+                <option value="Logística">Logística / Operações</option>
+                <option value="Geral">Outro</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Telefone / Ramal</label>
+              <input type="text" id="regPhone" placeholder="(11) 99999-9999"
+                class="w-full px-3 py-2.5 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-all" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Criar Senha *</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
+                <i data-lucide="lock" class="w-4 h-4"></i>
+              </span>
+              <input type="password" id="regPassword" required placeholder="Crie uma senha segura"
+                class="w-full pl-10 pr-10 py-2.5 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all" />
+              <button type="button" onclick="Auth.togglePasswordVisibility('regPassword', this)" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-500 hover:text-slate-300">
+                <i data-lucide="eye" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" id="btnRegisterSubmit" class="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl text-sm transition duration-150 flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30">
+            <span>Criar Conta e Acessar</span>
+            <i data-lucide="user-plus" class="w-4 h-4"></i>
+          </button>
+        </form>
+
+        <!-- TAB 3: FORGOT PASSWORD FORM -->
+        <div id="formForgot" class="hidden space-y-4">
+          <div id="forgotStep1" class="space-y-4">
+            <p class="text-xs text-slate-400">
+              Digite seu e-mail ou nome de usuário cadastrado para prosseguir com a redefinição de sua senha de acesso.
+            </p>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">E-mail ou Usuário</label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
+                  <i data-lucide="mail" class="w-4 h-4"></i>
+                </span>
+                <input type="text" id="forgotIdentifier" required placeholder="admin ou seu e-mail"
+                  class="w-full pl-10 pr-4 py-2.5 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all" />
+              </div>
+            </div>
+            <button type="button" onclick="Auth.handleForgotPasswordRequest()" class="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl text-sm transition duration-150 flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30">
+              <span>Continuar Recuperação</span>
+              <i data-lucide="key" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- Step 2: Reset Password (shown after identifier is confirmed) -->
+          <form id="forgotStep2" onsubmit="Auth.handleResetPasswordSubmit(event)" class="hidden space-y-4">
+            <div class="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs text-emerald-300 flex items-center gap-2">
+              <i data-lucide="check-circle" class="w-4 h-4 flex-shrink-0 text-emerald-400"></i>
+              <span id="forgotUserInfo">Usuário localizado! Crie sua nova senha agora.</span>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Nova Senha</label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
+                  <i data-lucide="lock" class="w-4 h-4"></i>
+                </span>
+                <input type="password" id="resetNewPassword" required placeholder="Digite a nova senha"
+                  class="w-full pl-10 pr-10 py-2.5 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all" />
+                <button type="button" onclick="Auth.togglePasswordVisibility('resetNewPassword', this)" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-500 hover:text-slate-300">
+                  <i data-lucide="eye" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-sm transition duration-150 flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30">
+              <span>Salvar Nova Senha e Conectar</span>
+              <i data-lucide="check" class="w-4 h-4"></i>
+            </button>
+          </form>
+
+          <div class="text-center pt-2">
+            <button type="button" onclick="Auth.showTab('login')" class="text-xs text-slate-400 hover:text-slate-200">
+              ← Voltar para o Login
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Info -->
+      <p class="text-center text-xs text-slate-500 mt-6">
+        ResolveOS &copy; 2026 &bull; Plataforma corporativa de gestão de chamados
+      </p>
+    </div>
+  </div>
+
+
+  <!-- ======================================================== -->
+  <!-- 2. MAIN APPLICATION INTERFACE (INSPIRED BY TEMPLATE.JPG) -->
+  <!-- ======================================================== -->
+  <div id="appSection" class="hidden min-h-screen flex flex-row bg-dark-bg text-slate-100">
+    
+    <!-- SIDEBAR (EXACT TEMPLATE MATCH) -->
+    <aside class="w-64 bg-dark-sidebar border-r border-dark-border flex flex-col justify-between flex-shrink-0 min-h-screen z-20">
+      <div>
+        <!-- Logo Header -->
+        <div class="h-20 px-6 flex items-center gap-3 border-b border-dark-border/60">
+          <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-600/40">
+            <!-- Gear / Wrench Icon from Template -->
+            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+              <path d="M12 1a3 3 0 0 0-3 3v.2a7.02 7.02 0 0 0-2.3 1.3l-.2-.1a3 3 0 0 0-4.2 4.2l.1.2A7.02 7.02 0 0 0 1.1 12H1a3 3 0 0 0 0 6h.1a7.02 7.02 0 0 0 1.3 2.3l-.1.2a3 3 0 0 0 4.2 4.2l.2-.1a7.02 7.02 0 0 0 2.3 1.3v.1a3 3 0 0 0 6 0v-.1a7.02 7.02 0 0 0 2.3-1.3l.2.1a3 3 0 0 0 4.2-4.2l-.1-.2a7.02 7.02 0 0 0 1.3-2.3H23a3 3 0 0 0 0-6h-.1a7.02 7.02 0 0 0-1.3-2.3l.1-.2a3 3 0 0 0-4.2-4.2l-.2.1A7.02 7.02 0 0 0 15 4.2V4a3 3 0 0 0-3-3zm0 7a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/>
+            </svg>
+          </div>
+          <span class="text-xl font-bold tracking-tight text-white flex items-center">
+            Resolve<span class="text-blue-500">OS</span>
+          </span>
+        </div>
+
+        <!-- Navigation Menu -->
+        <nav class="p-4 space-y-1.5" id="sidebarNav">
+          <!-- Chamados (Active by default in template) -->
+          <button onclick="App.navigate('chamados')" id="nav-chamados" class="sidebar-item active w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium text-white bg-blue-600 shadow-md shadow-blue-600/30 transition-all">
+            <i data-lucide="ticket" class="w-5 h-5"></i>
+            <span>Chamados</span>
+          </button>
+
+          <!-- Gerenciamento do Sistema -->
+          <button onclick="App.navigate('gerenciamento')" id="nav-gerenciamento" class="sidebar-item w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-dark-card transition-all">
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+            <span>Gerenciamento do Sistema</span>
+          </button>
+
+          <!-- Meu Perfil -->
+          <button onclick="App.navigate('perfil')" id="nav-perfil" class="sidebar-item w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-dark-card transition-all">
+            <i data-lucide="user" class="w-5 h-5"></i>
+            <span>Meu Perfil</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- User Profile at Sidebar Bottom (Template Match) -->
+      <div class="p-4 border-t border-dark-border/60">
+        <div class="relative">
+          <div class="flex items-center justify-between p-2 rounded-xl bg-dark-card/60 border border-dark-border/40 hover:border-slate-600 transition cursor-pointer" onclick="App.toggleProfileDropdown()">
+            <div class="flex items-center gap-3 min-w-0">
+              <img id="sidebarUserAvatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=256" alt="Avatar" class="w-10 h-10 rounded-full object-cover ring-2 ring-blue-500/40 flex-shrink-0" />
+              <div class="truncate text-left">
+                <div id="sidebarUserName" class="text-sm font-semibold text-white truncate">Carlos Silva</div>
+                <div class="flex items-center gap-1.5">
+                  <span id="sidebarUserRole" class="text-xs text-slate-400 truncate">Supervisor</span>
+                  <span id="sidebarSuperAdminBadge" class="hidden px-1.5 py-0.2 bg-blue-500/20 text-blue-400 rounded text-[10px] font-bold">SUPER</span>
+                </div>
+              </div>
+            </div>
+            <i data-lucide="more-vertical" class="w-4 h-4 text-slate-400 flex-shrink-0"></i>
+          </div>
+
+          <!-- Profile Dropdown Menu -->
+          <div id="profileDropdown" class="hidden absolute bottom-14 left-0 w-full bg-dark-card border border-dark-border rounded-xl shadow-2xl p-2 space-y-1 z-30">
+            <button onclick="App.navigate('perfil')" class="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition">
+              <i data-lucide="user" class="w-4 h-4"></i>
+              <span>Meu Perfil</span>
+            </button>
+            <button onclick="App.navigate('gerenciamento')" class="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition">
+              <i data-lucide="shield-check" class="w-4 h-4"></i>
+              <span>Gerenciamento do Sistema</span>
+            </button>
+            <div class="border-t border-dark-border/80 my-1"></div>
+            <button onclick="Auth.logout()" class="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg transition">
+              <i data-lucide="log-out" class="w-4 h-4"></i>
+              <span>Sair da Conta</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-1 flex flex-col min-h-screen overflow-x-hidden bg-dark-bg">
+      
+      <!-- TOP NAVBAR (TEMPLATE MATCH) -->
+      <header class="h-20 border-b border-dark-border px-8 flex items-center justify-between gap-6 bg-dark-bg/80 backdrop-blur sticky top-0 z-10">
+        <!-- Search bar (full width capability) -->
+        <div class="flex-1 max-w-xl">
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
+              <i data-lucide="search" class="w-4 h-4"></i>
+            </span>
+            <input
+              type="text"
+              id="topSearchInput"
+              oninput="App.handleSearch(this.value)"
+              placeholder="Buscar chamados, clientes ou ID..."
+              class="w-full pl-10 pr-4 py-2 bg-[#121b2a] border border-dark-border rounded-xl text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-all shadow-inner"
+            />
+          </div>
+        </div>
+
+        <!-- Top Right Actions -->
+        <div class="flex items-center gap-3">
+          <!-- Notification Bell with Red Dot -->
+          <div class="relative">
+            <button onclick="App.toggleNotificationDropdown()" class="p-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-dark-card border border-transparent hover:border-dark-border transition relative">
+              <i data-lucide="bell" class="w-5 h-5"></i>
+              <span id="notifBadge" class="absolute top-2 right-2 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-dark-bg"></span>
+            </button>
+
+            <!-- Notifications Dropdown -->
+            <div id="notificationsDropdown" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-dark-card border border-dark-border rounded-2xl shadow-2xl p-4 z-40">
+              <div class="flex items-center justify-between pb-3 border-b border-dark-border/80 mb-2">
+                <span class="font-bold text-sm text-white">Notificações</span>
+                <span class="text-xs text-blue-400 cursor-pointer hover:underline" onclick="App.markAllNotificationsRead()">Marcar como lidas</span>
+              </div>
+              <div id="notificationsList" class="space-y-2 max-h-72 overflow-y-auto pr-1">
+                <!-- Dynamically rendered -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Help Button -->
+          <button onclick="App.openHelpModal()" title="Ajuda & Atalhos" class="p-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-dark-card border border-transparent hover:border-dark-border transition">
+            <i data-lucide="help-circle" class="w-5 h-5"></i>
+          </button>
+
+          <!-- User Icon / Shortcut -->
+          <button onclick="App.navigate('perfil')" title="Meu Perfil" class="p-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-dark-card border border-transparent hover:border-dark-border transition">
+            <i data-lucide="user" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- VIEW CONTAINER: CONTENT SWAPS HERE -->
+      <div class="p-8 flex-1">
+
+        <!-- ===================================== -->
+        <!-- VIEW 1: CHAMADOS (PRIMARY TEMPLATE)  -->
+        <!-- ===================================== -->
+        <section id="viewChamados" class="space-y-6">
+          
+          <!-- Page Header & Action Buttons -->
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 class="text-2xl font-bold tracking-tight text-white">Gerenciamento de Chamados</h1>
+              <p class="text-xs sm:text-sm text-slate-400 mt-0.5">Acompanhe, atribua e resolva as solicitações de suporte em tempo real.</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <!-- New Ticket Button -->
+              <button onclick="App.openNewTicketModal()" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl text-sm flex items-center gap-2 shadow-lg shadow-blue-600/30 transition-all">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span>Novo Chamado</span>
+              </button>
+              <!-- Export Button -->
+              <button onclick="App.exportTicketsCSV()" title="Exportar chamados em CSV" class="p-2.5 bg-dark-card hover:bg-dark-cardHover border border-dark-border rounded-xl text-slate-300 hover:text-white transition">
+                <i data-lucide="upload" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- 4 METRIC CARDS (EXACT MATCH TEMPLATE.JPG) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <!-- Card 1: Total de Chamados -->
+            <div class="bg-dark-card border border-dark-border rounded-2xl p-5 flex items-center gap-4 transition hover:border-slate-600">
+              <div class="w-12 h-12 rounded-xl bg-blue-600/20 border border-blue-500/20 flex items-center justify-center text-blue-500 flex-shrink-0">
+                <i data-lucide="folder" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <div class="text-xs font-medium text-slate-400">Total de Chamados</div>
+                <div id="statTotalTickets" class="text-3xl font-extrabold text-white mt-0.5">142</div>
+              </div>
+            </div>
+
+            <!-- Card 2: Em Aberto -->
+            <div class="bg-dark-card border border-dark-border rounded-2xl p-5 flex items-center gap-4 transition hover:border-slate-600">
+              <div class="w-12 h-12 rounded-xl bg-rose-500/20 border border-rose-500/20 flex items-center justify-center text-rose-500 flex-shrink-0">
+                <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <div class="text-xs font-medium text-slate-400">Em Aberto</div>
+                <div id="statOpenTickets" class="text-3xl font-extrabold text-white mt-0.5">34</div>
+              </div>
+            </div>
+
+            <!-- Card 3: Em Atendimento -->
+            <div class="bg-dark-card border border-dark-border rounded-2xl p-5 flex items-center gap-4 transition hover:border-slate-600">
+              <div class="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/20 flex items-center justify-center text-amber-500 flex-shrink-0">
+                <i data-lucide="clock" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <div class="text-xs font-medium text-slate-400">Em Atendimento</div>
+                <div id="statInProgressTickets" class="text-3xl font-extrabold text-white mt-0.5">18</div>
+              </div>
+            </div>
+
+            <!-- Card 4: Resolvidos (Hoje) -->
+            <div class="bg-dark-card border border-dark-border rounded-2xl p-5 flex items-center gap-4 transition hover:border-slate-600">
+              <div class="w-12 h-12 rounded-xl bg-emerald-500/20 border border-emerald-500/20 flex items-center justify-center text-emerald-500 flex-shrink-0">
+                <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <div class="text-xs font-medium text-slate-400">Resolvidos (Hoje)</div>
+                <div id="statResolvedTickets" class="text-3xl font-extrabold text-white mt-0.5">28</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- FILTER TABS & DROPDOWNS BAR (TEMPLATE MATCH) -->
+          <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 pt-2">
+            
+            <!-- Left Tabs: Todos | Meus Chamados | Não Atribuídos | Aguardando Resposta -->
+            <div class="flex items-center gap-6 border-b border-dark-border/80 pb-2 overflow-x-auto text-sm font-medium">
+              <button onclick="App.setTab('todos')" id="tabFilter-todos" class="filter-tab active pb-2 border-b-2 border-blue-500 text-blue-400 whitespace-nowrap transition">
+                Todos
+              </button>
+              <button onclick="App.setTab('meus')" id="tabFilter-meus" class="filter-tab pb-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap transition">
+                Meus Chamados
+              </button>
+              <button onclick="App.setTab('nao_atribuidos')" id="tabFilter-nao_atribuidos" class="filter-tab pb-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap transition">
+                Não Atribuídos
+              </button>
+              <button onclick="App.setTab('aguardando')" id="tabFilter-aguardando" class="filter-tab pb-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap transition">
+                Aguardando Resposta
+              </button>
+            </div>
+
+            <!-- Right Filter Dropdowns (Prioridade, Status, Data) -->
+            <div class="flex items-center gap-3 flex-wrap">
+              <!-- Prioridade Dropdown -->
+              <div class="relative">
+                <select id="filterPriority" onchange="App.handleFilterChange()" class="appearance-none bg-dark-card border border-dark-border text-slate-300 text-xs font-semibold py-2 pl-3.5 pr-8 rounded-xl focus:outline-none focus:border-blue-500 cursor-pointer">
+                  <option value="todas">Prioridade: Todas</option>
+                  <option value="CRÍTICA">CRÍTICA</option>
+                  <option value="ALTA">ALTA</option>
+                  <option value="MÉDIA">MÉDIA</option>
+                  <option value="BAIXA">BAIXA</option>
+                </select>
+                <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+              </div>
+
+              <!-- Status Dropdown -->
+              <div class="relative">
+                <select id="filterStatus" onchange="App.handleFilterChange()" class="appearance-none bg-dark-card border border-dark-border text-slate-300 text-xs font-semibold py-2 pl-3.5 pr-8 rounded-xl focus:outline-none focus:border-blue-500 cursor-pointer">
+                  <option value="todos">Status: Todos</option>
+                  <option value="Em Aberto">Em Aberto</option>
+                  <option value="Em Progresso">Em Progresso</option>
+                  <option value="Aguardando Resposta">Aguardando Resposta</option>
+                  <option value="Resolvido">Resolvido</option>
+                </select>
+                <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+              </div>
+
+              <!-- Data / Ordenação Dropdown -->
+              <div class="relative">
+                <select id="filterDate" onchange="App.handleFilterChange()" class="appearance-none bg-dark-card border border-dark-border text-slate-300 text-xs font-semibold py-2 pl-3.5 pr-8 rounded-xl focus:outline-none focus:border-blue-500 cursor-pointer">
+                  <option value="recentes">Data: Mais Recentes</option>
+                  <option value="antigos">Data: Mais Antigos</option>
+                  <option value="prioridade">Maior Prioridade</option>
+                </select>
+                <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- TICKETS TABLE (TEMPLATE PIXEL MATCH) -->
+          <div class="bg-dark-card border border-dark-border rounded-2xl overflow-hidden shadow-xl">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm">
+                <thead>
+                  <tr class="bg-dark-tableHeader border-b border-dark-border/80 text-xs uppercase font-bold text-slate-400 tracking-wider">
+                    <th scope="col" class="py-4 px-6 w-24">ID</th>
+                    <th scope="col" class="py-4 px-6">Assunto e Solicitante</th>
+                    <th scope="col" class="py-4 px-6 w-32">Prioridade</th>
+                    <th scope="col" class="py-4 px-6 w-36">Status</th>
+                    <th scope="col" class="py-4 px-6 w-44">Responsável</th>
+                    <th scope="col" class="py-4 px-6 w-36">Atualizado</th>
+                    <th scope="col" class="py-4 px-6 w-32 text-right">Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="ticketsTableBody" class="divide-y divide-dark-border/50">
+                  <!-- Populated by JavaScript -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- TABLE FOOTER & PAGINATION (MATCH TEMPLATE) -->
+            <div class="p-4 px-6 border-t border-dark-border flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div id="paginationInfo" class="text-xs text-slate-400">
+                Exibindo 1-10 de 142 chamados
+              </div>
+              <div id="paginationControls" class="flex items-center gap-1.5">
+                <!-- Buttons injected by JS: < 1 2 3 > -->
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ===================================== -->
+        <!-- VIEW 2: GERENCIAMENTO DO SISTEMA    -->
+        <!-- ===================================== -->
+        <section id="viewGerenciamento" class="hidden space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h1 class="text-2xl font-bold tracking-tight text-white">Gerenciamento do Sistema</h1>
+              <p class="text-xs sm:text-sm text-slate-400 mt-0.5">Gerencie os usuários do sistema, permissões de Super Admin e parâmetros operacionais.</p>
+            </div>
+          </div>
+
+          <!-- Super Admin Alert Banner -->
+          <div id="superAdminBanner" class="p-4 rounded-2xl bg-gradient-to-r from-blue-900/40 to-indigo-900/40 border border-blue-500/30 flex items-start sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-400/30 flex items-center justify-center text-blue-400 flex-shrink-0">
+                <i data-lucide="shield" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                  Console do Super Administrador
+                  <span class="px-2 py-0.5 rounded text-[11px] bg-blue-500 text-white font-extrabold uppercase tracking-wide">Poder Total</span>
+                </h4>
+                <p class="text-xs text-blue-200/70 mt-0.5">
+                  Você está logado como Super Admin. Pode editar e excluir chamados, alterar funções de usuários e redefinir credenciais.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- User Management Table (Super Admin Control) -->
+          <div class="bg-dark-card border border-dark-border rounded-2xl p-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+              <div>
+                <h3 class="text-base font-bold text-white">Gerenciamento de Usuários e Permissões</h3>
+                <p class="text-xs text-slate-400">Controle quais usuários são Super Admin, Atendentes ou Clientes.</p>
+              </div>
+              <button onclick="App.openNewAttendantModal()" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-semibold flex items-center gap-2">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                <span>Novo Usuário</span>
+              </button>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm">
+                <thead class="bg-dark-tableHeader border-b border-dark-border text-xs uppercase font-bold text-slate-400">
+                  <tr>
+                    <th class="py-3 px-4">Usuário</th>
+                    <th class="py-3 px-4">E-mail</th>
+                    <th class="py-3 px-4">Departamento</th>
+                    <th class="py-3 px-4">Nível de Acesso</th>
+                    <th class="py-3 px-4">Status</th>
+                    <th class="py-3 px-4 text-right">Ações de Admin</th>
+                  </tr>
+                </thead>
+                <tbody id="userManagementTableBody" class="divide-y divide-dark-border/60">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- General System Settings Form -->
+          <div class="bg-dark-card border border-dark-border rounded-2xl p-6">
+            <h3 class="text-base font-bold text-white mb-4">Parâmetros do ResolveOS</h3>
+            <form onsubmit="App.handleSaveSettings(event)" class="space-y-4 max-w-2xl">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Nome da Organização</label>
+                  <input type="text" id="setOrgName" value="ResolveOS Enterprise" class="w-full px-3.5 py-2 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">E-mail de Suporte Central</label>
+                  <input type="email" id="setSupportEmail" value="suporte@resolveos.com" class="w-full px-3.5 py-2 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100" />
+                </div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">SLA Crítico / Alta (Horas)</label>
+                  <input type="number" id="setSlaHigh" value="2" class="w-full px-3.5 py-2 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">SLA Média (Horas)</label>
+                  <input type="number" id="setSlaMedium" value="8" class="w-full px-3.5 py-2 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">SLA Baixa (Horas)</label>
+                  <input type="number" id="setSlaLow" value="24" class="w-full px-3.5 py-2 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100" />
+                </div>
+              </div>
+              <div class="pt-2">
+                <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl text-sm shadow-md transition">
+                  Salvar Alterações
+                </button>
+              </div>
+            </form>
+          </div>
+
+        </section>
+
+        <!-- ===================================== -->
+        <!-- VIEW 3: MEU PERFIL                    -->
+        <!-- ===================================== -->
+        <section id="viewPerfil" class="hidden space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h1 class="text-2xl font-bold tracking-tight text-white">Meu Perfil</h1>
+              <p class="text-xs sm:text-sm text-slate-400 mt-0.5">Gerencie suas informações de conta, dados de contato e credenciais de acesso.</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- User Summary Card -->
+            <div class="bg-dark-card border border-dark-border rounded-2xl p-6 text-center flex flex-col items-center">
+              <img id="profileCardAvatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=256"
+                class="w-24 h-24 rounded-full object-cover ring-4 ring-blue-500/30 mb-4 shadow-xl" />
+              <h3 id="profileCardName" class="text-xl font-bold text-white">Carlos Silva</h3>
+              <div id="profileCardBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 mt-2">
+                <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                <span id="profileCardRoleLabel">Super Admin</span>
+              </div>
+              <div id="profileCardEmail" class="text-xs text-slate-400 mt-2 font-mono">admin@resolveos.com</div>
+
+              <div class="w-full mt-6 pt-6 border-t border-dark-border/60 text-xs text-left space-y-2.5">
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Departamento:</span>
+                  <span id="profileCardDept" class="font-semibold text-slate-200">TI</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Status da Conta:</span>
+                  <span class="font-semibold text-emerald-400 flex items-center gap-1">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Ativa
+                  </span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Acesso:</span>
+                  <span id="profileCardPerms" class="font-semibold text-blue-400">Acesso Irrestrito</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Profile Edit Forms -->
+            <div class="lg:col-span-2 space-y-6">
+              <!-- Edit Personal Details -->
+              <div class="bg-dark-card border border-dark-border rounded-2xl p-6">
+                <h3 class="text-base font-bold text-white mb-4 flex items-center gap-2">
+                  <i data-lucide="user-check" class="w-5 h-5 text-blue-500"></i>
+                  <span>Dados Pessoais & Contato</span>
+                </h3>
+                <form onsubmit="App.handleSaveMyProfile(event)" class="space-y-4">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Nome Completo</label>
+                      <input type="text" id="myProfileName" required class="w-full px-3.5 py-2.5 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100 focus:outline-none focus:border-blue-500" />
+                    </div>
+                    <div>
+                      <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">E-mail Corporativo</label>
+                      <input type="email" id="myProfileEmail" required class="w-full px-3.5 py-2.5 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100 focus:outline-none focus:border-blue-500" />
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Departamento</label>
+                      <input type="text" id="myProfileDept" class="w-full px-3.5 py-2.5 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100 focus:outline-none focus:border-blue-500" />
+                    </div>
+                    <div>
+                      <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Telefone / Ramal</label>
+                      <input type="text" id="myProfilePhone" class="w-full px-3.5 py-2.5 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100 focus:outline-none focus:border-blue-500" />
+                    </div>
+                  </div>
+                  <div class="pt-2">
+                    <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl text-sm shadow-md transition">
+                      Atualizar Meus Dados
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- Change Password Form -->
+              <div class="bg-dark-card border border-dark-border rounded-2xl p-6">
+                <h3 class="text-base font-bold text-white mb-4 flex items-center gap-2">
+                  <i data-lucide="lock" class="w-5 h-5 text-amber-500"></i>
+                  <span>Alterar Minha Senha</span>
+                </h3>
+                <form onsubmit="App.handleChangeMyPassword(event)" class="space-y-4">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Nova Senha</label>
+                      <input type="password" id="myNewPassword" required placeholder="Mínimo 3 caracteres" class="w-full px-3.5 py-2.5 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100 focus:outline-none focus:border-blue-500" />
+                    </div>
+                    <div>
+                      <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Confirmar Nova Senha</label>
+                      <input type="password" id="myConfirmPassword" required placeholder="Repita a nova senha" class="w-full px-3.5 py-2.5 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100 focus:outline-none focus:border-blue-500" />
+                    </div>
+                  </div>
+                  <div class="pt-2">
+                    <button type="submit" class="px-5 py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-semibold rounded-xl text-sm shadow-md transition">
+                      Redefinir Minha Senha
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+
+  <!-- ======================================================== -->
+  <!-- 3. INTERACTIVE MODALS & DRAWERS                           -->
+  <!-- ======================================================== -->
+
+  <!-- MODAL: NOVO CHAMADO -->
+  <div id="modalNewTicket" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-dark-card border border-dark-border w-full max-w-xl rounded-2xl shadow-2xl p-6 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-dark-border">
+        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+          <i data-lucide="plus-circle" class="w-5 h-5 text-blue-500"></i>
+          <span>Abertura de Novo Chamado</span>
+        </h3>
+        <button onclick="App.closeModal('modalNewTicket')" class="text-slate-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form onsubmit="App.handleCreateTicketSubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Assunto / Resumo do Problema *</label>
+          <input type="text" id="newTicketSubject" required placeholder="Ex: Falha na impressora do setor de vendas"
+            class="w-full px-3.5 py-2.5 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500" />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Prioridade</label>
+            <select id="newTicketPriority" class="w-full px-3.5 py-2.5 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100">
+              <option value="BAIXA">BAIXA</option>
+              <option value="MÉDIA" selected>MÉDIA</option>
+              <option value="ALTA">ALTA</option>
+              <option value="CRÍTICA">CRÍTICA</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Categoria</label>
+            <select id="newTicketCategory" class="w-full px-3.5 py-2.5 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100">
+              <option value="Sistemas Internos">Sistemas Internos</option>
+              <option value="Redes & Conectividade">Redes & Conectividade</option>
+              <option value="Hardware">Hardware / Equipamentos</option>
+              <option value="Acessos e Permissões">Acessos e Permissões</option>
+              <option value="E-mail & Nuvem">E-mail & Nuvem</option>
+              <option value="Suporte Geral">Suporte Geral</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Solicitante</label>
+            <input type="text" id="newTicketRequester" required placeholder="Nome do solicitante"
+              class="w-full px-3.5 py-2.5 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Departamento</label>
+            <select id="newTicketDepartment" class="w-full px-3.5 py-2.5 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100">
+              <option value="RH">RH</option>
+              <option value="Financeiro">Financeiro</option>
+              <option value="Vendas">Vendas</option>
+              <option value="Marketing">Marketing</option>
+              <option value="TI">TI</option>
+              <option value="Logística">Logística</option>
+              <option value="Diretoria">Diretoria</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Atribuir a um Atendente (Opcional)</label>
+          <select id="newTicketAssignee" class="w-full px-3.5 py-2.5 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100">
+            <option value="">Sem Atendente (Ficar em Aberto)</option>
+            <option value="Mariana Costa">Mariana Costa</option>
+            <option value="Felipe Melo">Felipe Melo</option>
+            <option value="Carlos Silva">Carlos Silva</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Descrição Detalhada do Problema</label>
+          <textarea id="newTicketDescription" rows="4" placeholder="Descreva os passos que causaram o erro, mensagens exibidas..."
+            class="w-full px-3.5 py-2.5 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500"></textarea>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-3 border-t border-dark-border">
+          <button type="button" onclick="App.closeModal('modalNewTicket')" class="px-4 py-2 text-sm text-slate-300 hover:text-white">
+            Cancelar
+          </button>
+          <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl text-sm shadow-lg shadow-blue-600/30">
+            Criar Chamado
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: DETALHES DO CHAMADO (VIEW & COMMENTS) -->
+  <div id="modalTicketDetails" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-dark-card border border-dark-border w-full max-w-3xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+      <!-- Modal Header -->
+      <div class="p-6 border-b border-dark-border flex items-start justify-between gap-4 bg-dark-card/90">
+        <div>
+          <div class="flex items-center gap-3">
+            <span id="detailTicketId" class="text-sm font-mono font-bold text-blue-400">#1084</span>
+            <span id="detailTicketPriority" class="text-xs font-bold px-2.5 py-0.5 rounded-full">ALTA</span>
+            <span id="detailTicketStatus" class="text-xs font-semibold px-2.5 py-0.5 rounded-full">Em Aberto</span>
+          </div>
+          <h2 id="detailTicketSubject" class="text-lg font-bold text-white mt-1.5">Erro no acesso ao sistema financeiro</h2>
+          <div class="text-xs text-slate-400 mt-1 flex items-center gap-3">
+            <span>Solicitante: <strong id="detailTicketRequester" class="text-slate-200">Ana Souza (RH)</strong></span>
+            <span>&bull;</span>
+            <span id="detailTicketCreatedAgo">Aberto há 12 min</span>
+          </div>
+        </div>
+        <button onclick="App.closeModal('modalTicketDetails')" class="text-slate-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-6 overflow-y-auto space-y-6 flex-1">
+        <!-- Quick Control Bar (Change Status / Assignee) -->
+        <div class="p-4 bg-dark-bg/60 border border-dark-border rounded-xl grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Atualizar Status</label>
+            <select id="detailChangeStatus" onchange="App.handleUpdateTicketStatus(this.value)" class="w-full px-3 py-2 bg-dark-input border border-dark-border rounded-lg text-xs font-semibold text-slate-200">
+              <option value="Em Aberto">Em Aberto</option>
+              <option value="Em Progresso">Em Progresso</option>
+              <option value="Aguardando Resposta">Aguardando Resposta</option>
+              <option value="Resolvido">Resolvido</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Atribuir Responsável</label>
+            <select id="detailChangeAssignee" onchange="App.handleUpdateTicketAssignee(this.value)" class="w-full px-3 py-2 bg-dark-input border border-dark-border rounded-lg text-xs font-semibold text-slate-200">
+              <option value="">Sem Atendente</option>
+              <option value="Mariana Costa">Mariana Costa</option>
+              <option value="Felipe Melo">Felipe Melo</option>
+              <option value="Carlos Silva">Carlos Silva (Super Admin)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Description Box -->
+        <div>
+          <h4 class="text-xs font-semibold text-slate-400 uppercase mb-2">Descrição da Solicitação</h4>
+          <div id="detailTicketDescription" class="p-4 rounded-xl bg-dark-bg/50 border border-dark-border/60 text-sm text-slate-200 leading-relaxed whitespace-pre-wrap">
+            Ao tentar realizar o login no ERP financeiro...
+          </div>
+        </div>
+
+        <!-- Timeline of interactions & comments -->
+        <div>
+          <h4 class="text-xs font-semibold text-slate-400 uppercase mb-3 flex items-center justify-between">
+            <span>Histórico e Interações</span>
+            <span id="detailCommentsCount" class="text-blue-400 font-mono">2 notas</span>
+          </h4>
+          <div id="detailCommentsList" class="space-y-3">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Add Reply Form -->
+        <form onsubmit="App.handleAddComment(event)" class="space-y-3 pt-2">
+          <label class="block text-xs font-semibold text-slate-300 uppercase">Adicionar Resposta ou Atualização</label>
+          <div class="relative">
+            <textarea id="commentReplyText" rows="3" required placeholder="Digite uma resposta ou nota interna sobre este chamado..."
+              class="w-full px-3.5 py-2.5 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500"></textarea>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-slate-500">Pressione Enviar para notificar os envolvidos</span>
+            <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl text-xs flex items-center gap-1.5 shadow">
+              <i data-lucide="send" class="w-3.5 h-3.5"></i>
+              <span>Enviar Mensagem</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 px-6 border-t border-dark-border bg-dark-card/90 flex items-center justify-between">
+        <button id="btnDeleteTicketModal" onclick="App.handleDeleteCurrentTicket()" class="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1.5">
+          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          <span>Excluir Chamado (Super Admin)</span>
+        </button>
+        <button onclick="App.closeModal('modalTicketDetails')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold">
+          Fechar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: EDITAR CHAMADO (QUICK EDIT) -->
+  <div id="modalEditTicket" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-dark-card border border-dark-border w-full max-w-md rounded-2xl shadow-2xl p-6 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-dark-border">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i data-lucide="edit-3" class="w-4 h-4 text-blue-500"></i>
+          <span>Editar Chamado</span>
+        </h3>
+        <button onclick="App.closeModal('modalEditTicket')" class="text-slate-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form onsubmit="App.handleSaveEditTicket(event)" class="space-y-4">
+        <input type="hidden" id="editTicketId" />
+        
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Assunto</label>
+          <input type="text" id="editTicketSubject" required class="w-full px-3 py-2 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Prioridade</label>
+            <select id="editTicketPriority" class="w-full px-3 py-2 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100">
+              <option value="BAIXA">BAIXA</option>
+              <option value="MÉDIA">MÉDIA</option>
+              <option value="ALTA">ALTA</option>
+              <option value="CRÍTICA">CRÍTICA</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Status</label>
+            <select id="editTicketStatus" class="w-full px-3 py-2 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100">
+              <option value="Em Aberto">Em Aberto</option>
+              <option value="Em Progresso">Em Progresso</option>
+              <option value="Aguardando Resposta">Aguardando Resposta</option>
+              <option value="Resolvido">Resolvido</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Responsável</label>
+          <select id="editTicketAssignee" class="w-full px-3 py-2 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100">
+            <option value="">Sem Atendente</option>
+            <option value="Mariana Costa">Mariana Costa</option>
+            <option value="Felipe Melo">Felipe Melo</option>
+            <option value="Carlos Silva">Carlos Silva</option>
+          </select>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2 border-t border-dark-border">
+          <button type="button" onclick="App.closeModal('modalEditTicket')" class="px-3 py-2 text-xs text-slate-400 hover:text-white">
+            Cancelar
+          </button>
+          <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-semibold">
+            Salvar Alterações
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: NOVO ATENDENTE / USUÁRIO (SUPER ADMIN) -->
+  <div id="modalNewAttendant" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-dark-card border border-dark-border w-full max-w-md rounded-2xl shadow-2xl p-6 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-dark-border">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i data-lucide="user-plus" class="w-4 h-4 text-blue-500"></i>
+          <span>Cadastrar Novo Atendente / Usuário</span>
+        </h3>
+        <button onclick="App.closeModal('modalNewAttendant')" class="text-slate-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form onsubmit="App.handleCreateUserSubmit(event)" class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Nome Completo *</label>
+          <input type="text" id="newUserName" required placeholder="Ex: Lucas Mendes"
+            class="w-full px-3 py-2 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">E-mail *</label>
+          <input type="email" id="newUserEmail" required placeholder="lucas@resolveos.com"
+            class="w-full px-3 py-2 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Nível de Acesso</label>
+            <select id="newUserRole" class="w-full px-3 py-2 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100">
+              <option value="attendant">Atendente</option>
+              <option value="supervisor">Supervisor</option>
+              <option value="superadmin">Super Admin</option>
+              <option value="client">Cliente</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Departamento</label>
+            <input type="text" id="newUserDepartment" value="Suporte Técnico"
+              class="w-full px-3 py-2 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Senha Inicial *</label>
+          <input type="password" id="newUserPassword" required value="123456"
+            class="w-full px-3 py-2 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100" />
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t border-dark-border">
+          <button type="button" onclick="App.closeModal('modalNewAttendant')" class="px-3 py-2 text-xs text-slate-400 hover:text-white">
+            Cancelar
+          </button>
+          <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-semibold">
+            Cadastrar Usuário
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: PERFIL DO USUÁRIO LOGADO -->
+  <div id="modalUserProfile" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-dark-card border border-dark-border w-full max-w-md rounded-2xl shadow-2xl p-6 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-dark-border">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i data-lucide="user" class="w-4 h-4 text-blue-500"></i>
+          <span>Perfil de Usuário</span>
+        </h3>
+        <button onclick="App.closeModal('modalUserProfile')" class="text-slate-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="text-center py-2">
+        <img id="userProfileAvatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=256"
+          class="w-20 h-20 rounded-full mx-auto object-cover ring-4 ring-blue-500/30" />
+        <h4 id="userProfileName" class="text-lg font-bold text-white mt-2">Carlos Silva</h4>
+        <div id="userProfileBadge" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 mt-1">
+          Super Admin
+        </div>
+        <div id="userProfileEmail" class="text-xs text-slate-400 mt-1">admin@resolveos.com</div>
+      </div>
+
+      <div class="p-3 bg-dark-bg/60 rounded-xl border border-dark-border text-xs text-slate-300 space-y-1.5">
+        <div class="flex justify-between">
+          <span class="text-slate-400">Departamento:</span>
+          <span id="userProfileDept" class="font-semibold text-slate-200">TI</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">Privilégios:</span>
+          <span id="userProfilePerms" class="font-semibold text-blue-400">Controle Total do Sistema</span>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-2 border-t border-dark-border">
+        <button onclick="Auth.logout()" class="px-3 py-2 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 rounded-xl text-xs font-semibold flex items-center gap-1.5">
+          <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+          <span>Encerrar Sessão</span>
+        </button>
+        <button onclick="App.closeModal('modalUserProfile')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold">
+          Fechar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: AJUDA & ATALHOS -->
+  <div id="modalHelp" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-dark-card border border-dark-border w-full max-w-lg rounded-2xl shadow-2xl p-6 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-dark-border">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i data-lucide="help-circle" class="w-5 h-5 text-blue-500"></i>
+          <span>Guia do ResolveOS</span>
+        </h3>
+        <button onclick="App.closeModal('modalHelp')" class="text-slate-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs sm:text-sm text-slate-300">
+        <p><strong>ResolveOS</strong> é a plataforma completa para gerenciamento centralizado de incidentes, chamados e suporte corporativo.</p>
+        <div class="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-xs space-y-1">
+          <div class="font-bold text-blue-400">Super Admin (Pré-configurado):</div>
+          <div>Usuário: <code class="text-white">admin</code> | Senha: <code class="text-white">123</code></div>
+          <div class="text-slate-400">Possui poder pleno para criar, editar, reatribuir e excluir chamados, além de gerenciar todos os atendentes e configurações.</div>
+        </div>
+        <div class="space-y-1.5 pt-2">
+          <div class="font-bold text-slate-200">Recursos principais:</div>
+          <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Filtros rápidos por Meus Chamados, Não Atribuídos e Aguardando.</div>
+          <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Busca inteligente em tempo real por assunto, solicitante ou ID.</div>
+          <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Exportação instantânea em CSV com um clique.</div>
+        </div>
+      </div>
+
+      <div class="text-right pt-3 border-t border-dark-border">
+        <button onclick="App.closeModal('modalHelp')" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-semibold">
+          Entendido
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- SCRIPTS -->
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/app.js"></script>
+  <script>
+    // Initialize Lucide icons on boot
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      // Check auth state on initial load
+      Auth.init();
+    });
+  </script>
+</body>
+</html>
+

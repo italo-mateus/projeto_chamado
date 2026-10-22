@@ -1,0 +1,21 @@
+{
+  "name": "projeto_chamado",
+  "version": "1.0.0",
+  "description": "Sistema completo de Service Desk e Gerenciamento de Chamados desenvolvido com base no layout e design do **ResolveOS** (`template.jpg`).",
+  "keywords": [],
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^13.0.3",
+    "cors": "^2.8.6",
+    "express": "^5.3.0",
+    "jsonwebtoken": "^9.0.3"
+  }
+}
