@@ -108,7 +108,7 @@ const Auth = {
   fillAdminCredentials() {
     document.getElementById('loginIdentifier').value = 'admin';
     document.getElementById('loginPassword').value = '123';
-    this.showAlert('Credenciais do Super Admin inseridas! Clique em "Acessar o ResolveOS".', 'info');
+    this.showAlert('Credenciais do Admin inseridas! Clique em "Acessar o ResolveOS".', 'info');
   },
 
   async handleLogin(event) {

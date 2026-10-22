@@ -49,15 +49,15 @@ function optionalAuth(req, res, next) {
 }
 
 /**
- * Middleware que exige role de Super Admin
- * Bloqueia acesso se usuário não for superadmin
+ * Middleware que exige role de Admin
+ * Bloqueia acesso se usuário não for admin
  * @param {Object} req - Requisição Express
  * @param {Object} res - Resposta Express
  * @param {Function} next - Próximo middleware
  */
-function requireSuperAdmin(req, res, next) {
-  if (!req.user || req.user.role !== 'superadmin') {
-    return res.status(403).json({ error: 'Acesso restrito: Requer privilégios de Super Admin.' });
+function requireAdmin(req, res, next) {
+  if (!req.user || req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Acesso restrito: Requer privilégios de Admin.' });
   }
   next();
 }
@@ -66,5 +66,5 @@ module.exports = {
   JWT_SECRET,
   authenticateToken,
   optionalAuth,
-  requireSuperAdmin
+  requireAdmin
 };

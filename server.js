@@ -29,8 +29,8 @@ if (require.main === module) {
     console.log(`===================================================`);
     console.log(`🚀 ResolveOS (Arquitetura MVC) rodando na porta ${PORT}`);
     console.log(`🔗 http://localhost:${PORT}`);
-    console.log(`👤 Super Admin User: admin`);
-    console.log(`🔑 Super Admin Password: 123`);
+    console.log(`👤 Admin User: admin`);
+    console.log(`🔑 Admin Password: 123`);
     console.log(`===================================================`);
   });
 }

@@ -20,28 +20,28 @@ const App = {
     this.loadClients();
   },
 
-  setupUserProfile() {
+setupUserProfile() {
     if (!this.user) return;
-
+ 
     // Sidebar Profile
     const userNameEl = document.getElementById('sidebarUserName');
     const userRoleEl = document.getElementById('sidebarUserRole');
     const userAvatarEl = document.getElementById('sidebarUserAvatar');
-    const superAdminBadgeEl = document.getElementById('sidebarSuperAdminBadge');
-
+    const adminBadgeEl = document.getElementById('sidebarAdminBadge');
+ 
     if (userNameEl) userNameEl.textContent = this.user.name;
     if (userRoleEl) userRoleEl.textContent = this.user.roleLabel || this.user.role;
     if (userAvatarEl && this.user.avatar) userAvatarEl.src = this.user.avatar;
-
-    const isSuperAdmin = this.user.role === 'superadmin';
-    if (superAdminBadgeEl) {
-      if (isSuperAdmin) {
-        superAdminBadgeEl.classList.remove('hidden');
+ 
+    const isAdmin = this.user.role === 'admin';
+    if (adminBadgeEl) {
+      if (isAdmin) {
+        adminBadgeEl.classList.remove('hidden');
       } else {
-        superAdminBadgeEl.classList.add('hidden');
+        adminBadgeEl.classList.add('hidden');
       }
     }
-
+ 
     // Modal Profile
     const profileName = document.getElementById('userProfileName');
     const profileBadge = document.getElementById('userProfileBadge');
@@ -49,37 +49,39 @@ const App = {
     const profileDept = document.getElementById('userProfileDept');
     const profilePerms = document.getElementById('userProfilePerms');
     const profileAvatar = document.getElementById('userProfileAvatar');
-
+ 
     if (profileName) profileName.textContent = this.user.name;
     if (profileEmail) profileEmail.textContent = this.user.email;
     if (profileDept) profileDept.textContent = this.user.department || 'Geral';
     if (profileAvatar && this.user.avatar) profileAvatar.src = this.user.avatar;
-
+ 
     if (profileBadge) {
       profileBadge.textContent = this.user.roleLabel || this.user.role;
-      if (isSuperAdmin) {
+      if (isAdmin) {
         profileBadge.className = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 mt-1';
       } else {
         profileBadge.className = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-700 text-slate-300 mt-1';
       }
     }
-
+ 
     if (profilePerms) {
-      profilePerms.textContent = isSuperAdmin ? 'Controle Total do Sistema (Super Admin)' : 'Acesso Padrão';
+      profilePerms.textContent = isAdmin ? 'Controle Total do Sistema (Admin)' : 'Acesso Padrão';
     }
-
+ 
     // New Ticket Modal Requester prefill
     const reqInput = document.getElementById('newTicketRequester');
     if (reqInput) reqInput.value = this.user.name;
   },
 
-  setupViewPermissions() {
-    const isSuperAdmin = this.user && this.user.role === 'superadmin';
+setupViewPermissions() {
+    const isAdmin = this.user && this.user.role === 'admin';
     const banner = document.getElementById('superAdminBanner');
     const btnDeleteModal = document.getElementById('btnDeleteTicketModal');
+    const navGerenciamento = document.getElementById('nav-gerenciamento');
+    const navGerenciamentoDropdown = document.getElementById('nav-gerenciamento-dropdown');
 
     if (banner) {
-      if (isSuperAdmin) {
+      if (isAdmin) {
         banner.classList.remove('hidden');
       } else {
         banner.classList.add('hidden');
@@ -87,10 +89,26 @@ const App = {
     }
 
     if (btnDeleteModal) {
-      if (isSuperAdmin) {
+      if (isAdmin) {
         btnDeleteModal.classList.remove('hidden');
       } else {
         btnDeleteModal.classList.add('hidden');
+      }
+    }
+
+    if (navGerenciamento) {
+      if (isAdmin) {
+        navGerenciamento.classList.remove('hidden');
+      } else {
+        navGerenciamento.classList.add('hidden');
+      }
+    }
+
+    if (navGerenciamentoDropdown) {
+      if (isAdmin) {
+        navGerenciamentoDropdown.classList.remove('hidden');
+      } else {
+        navGerenciamentoDropdown.classList.add('hidden');
       }
     }
   },
@@ -130,31 +148,31 @@ const App = {
     lucide.createIcons();
   },
 
-  loadMyProfileView() {
+loadMyProfileView() {
     if (!this.user) return;
     const nameInput = document.getElementById('myProfileName');
     const emailInput = document.getElementById('myProfileEmail');
     const deptInput = document.getElementById('myProfileDept');
     const phoneInput = document.getElementById('myProfilePhone');
-
+ 
     if (nameInput) nameInput.value = this.user.name || '';
     if (emailInput) emailInput.value = this.user.email || '';
     if (deptInput) deptInput.value = this.user.department || '';
     if (phoneInput) phoneInput.value = this.user.phone || '';
-
+ 
     const cardAvatar = document.getElementById('profileCardAvatar');
     const cardName = document.getElementById('profileCardName');
     const cardRole = document.getElementById('profileCardRoleLabel');
     const cardEmail = document.getElementById('profileCardEmail');
     const cardDept = document.getElementById('profileCardDept');
     const cardPerms = document.getElementById('profileCardPerms');
-
+ 
     if (cardAvatar && this.user.avatar) cardAvatar.src = this.user.avatar;
     if (cardName) cardName.textContent = this.user.name;
     if (cardRole) cardRole.textContent = this.user.roleLabel || this.user.role;
     if (cardEmail) cardEmail.textContent = this.user.email;
     if (cardDept) cardDept.textContent = this.user.department || 'Geral';
-    if (cardPerms) cardPerms.textContent = this.user.role === 'superadmin' ? 'Acesso Irrestrito (Super Admin)' : 'Acesso Padrão';
+    if (cardPerms) cardPerms.textContent = this.user.role === 'admin' ? 'Acesso Irrestrito (Admin)' : 'Acesso Padrão';
     lucide.createIcons();
   },
 
@@ -397,7 +415,7 @@ const App = {
                     <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
                     <span>Resolver chamado</span>
                   </button>
-                  ${(this.user && this.user.role === 'superadmin') ? `
+                  ${(this.user && this.user.role === 'admin') ? `
                     <div class="border-t border-dark-border my-1"></div>
                     <button onclick="App.quickDeleteTicket('${ticket.id}')" class="w-full px-3 py-1.5 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg flex items-center gap-2">
                       <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
@@ -730,7 +748,11 @@ const App = {
   },
 
   async quickDeleteTicket(ticketId) {
-    if (!confirm('Deseja realmente remover este chamado? (Ação de Super Admin)')) return;
+    if (!this.user || this.user.role !== 'admin') {
+      this.toast('Apenas Admin pode excluir chamados', 'error');
+      return;
+    }
+    if (!confirm('Deseja realmente remover este chamado? (Ação de Admin)')) return;
     try {
       await API.deleteTicket(ticketId);
       this.toast('Chamado excluído!', 'info');
@@ -741,32 +763,32 @@ const App = {
   },
 
   // Attendants View
-  async loadAttendants() {
+async loadAttendants() {
     const grid = document.getElementById('attendantsListGrid');
     if (!grid) return;
-
+ 
     try {
       const users = await API.getUsers();
-      const attendants = users.filter(u => u.role === 'attendant' || u.role === 'supervisor' || u.role === 'superadmin');
-
+      const attendants = users.filter(u => u.role === 'attendant' || u.role === 'admin');
+ 
       let html = '';
       attendants.forEach(u => {
-        const isSuper = u.role === 'superadmin';
+        const isAdmin = u.role === 'admin';
         html += `
           <div class="bg-dark-card border border-dark-border rounded-2xl p-5 flex flex-col justify-between space-y-4 hover:border-slate-600 transition">
             <div class="flex items-start gap-4">
               <img src="${u.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=256'}"
-                class="w-12 h-12 rounded-xl object-cover ring-2 ${isSuper ? 'ring-purple-500' : 'ring-blue-500'}" />
+                class="w-12 h-12 rounded-xl object-cover ring-2 ${isAdmin ? 'ring-blue-500' : 'ring-blue-500'}" />
               <div class="truncate">
                 <div class="text-sm font-bold text-white flex items-center gap-1.5 truncate">
                   <span>${u.name}</span>
-                  ${isSuper ? '<span class="px-1.5 py-0.2 bg-purple-500/20 text-purple-300 text-[10px] font-bold rounded">SUPER</span>' : ''}
+                  ${isAdmin ? '<span class="px-1.5 py-0.2 bg-blue-500/20 text-blue-300 text-[10px] font-bold rounded">ADMIN</span>' : ''}
                 </div>
                 <div class="text-xs text-blue-400 mt-0.5">${u.roleLabel || u.role}</div>
                 <div class="text-xs text-slate-400 mt-0.5 truncate">${u.department || 'TI'}</div>
               </div>
             </div>
-
+ 
             <div class="pt-3 border-t border-dark-border/60 flex items-center justify-between text-xs text-slate-400">
               <span class="flex items-center gap-1.5">
                 <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Disponível
@@ -776,7 +798,7 @@ const App = {
           </div>
         `;
       });
-
+ 
       grid.innerHTML = html;
       lucide.createIcons();
     } catch (err) {
@@ -853,17 +875,17 @@ const App = {
   },
 
   // User Management Table in Settings (Super Admin)
-  async loadUserManagementTable() {
+async loadUserManagementTable() {
     const tableBody = document.getElementById('userManagementTableBody');
     if (!tableBody) return;
-
+ 
     try {
       const users = await API.getUsers();
       let html = '';
       users.forEach(u => {
         const isCurrent = this.user && this.user.id === u.id;
         const isMasterAdmin = u.username === 'admin';
-
+ 
         html += `
           <tr class="hover:bg-dark-cardHover/50 transition">
             <td class="py-3 px-4">
@@ -875,10 +897,8 @@ const App = {
             <td class="py-3 px-4">
               <select onchange="App.handleRoleChange('${u.id}', this.value)" ${isMasterAdmin ? 'disabled' : ''}
                 class="bg-dark-input border border-dark-border text-xs rounded-lg px-2 py-1 text-slate-200">
-                <option value="superadmin" ${u.role === 'superadmin' ? 'selected' : ''}>Super Admin</option>
-                <option value="supervisor" ${u.role === 'supervisor' ? 'selected' : ''}>Supervisor</option>
+                <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>Admin</option>
                 <option value="attendant" ${u.role === 'attendant' ? 'selected' : ''}>Atendente</option>
-                <option value="client" ${u.role === 'client' ? 'selected' : ''}>Cliente</option>
               </select>
             </td>
             <td class="py-3 px-4">

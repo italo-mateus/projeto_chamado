@@ -136,13 +136,13 @@
             <i data-lucide="arrow-right" class="w-4 h-4"></i>
           </button>
 
-          <!-- Super Admin Quick Fill Helper -->
+          <!-- Admin Quick Fill Helper -->
           <div class="pt-4 border-t border-dark-border/60">
             <div class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-3 flex items-center justify-between">
               <div class="text-xs text-slate-300">
                 <span class="font-bold text-blue-400 flex items-center gap-1.5">
                   <i data-lucide="shield-check" class="w-3.5 h-3.5 text-blue-400"></i>
-                  Super Admin Padrão
+                  Admin Padrão
                 </span>
                 <span class="text-[11px] text-slate-400 block mt-0.5">Usuário: <code class="text-blue-300">admin</code> | Senha: <code class="text-blue-300">123</code></span>
               </div>
@@ -348,7 +348,7 @@
               <i data-lucide="user" class="w-4 h-4"></i>
               <span>Meu Perfil</span>
             </button>
-            <button onclick="App.navigate('gerenciamento')" class="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition">
+            <button onclick="App.navigate('gerenciamento')" id="nav-gerenciamento-dropdown" class="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition">
               <i data-lucide="shield-check" class="w-4 h-4"></i>
               <span>Gerenciamento do Sistema</span>
             </button>
@@ -595,7 +595,7 @@
             </div>
           </div>
 
-          <!-- Super Admin Alert Banner -->
+          <!-- Admin Alert Banner -->
           <div id="superAdminBanner" class="p-4 rounded-2xl bg-gradient-to-r from-blue-900/40 to-indigo-900/40 border border-blue-500/30 flex items-start sm:items-center justify-between gap-4">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-400/30 flex items-center justify-center text-blue-400 flex-shrink-0">
@@ -603,22 +603,22 @@
               </div>
               <div>
                 <h4 class="text-sm font-bold text-white flex items-center gap-2">
-                  Console do Super Administrador
+                  Console do Administrador
                   <span class="px-2 py-0.5 rounded text-[11px] bg-blue-500 text-white font-extrabold uppercase tracking-wide">Poder Total</span>
                 </h4>
                 <p class="text-xs text-blue-200/70 mt-0.5">
-                  Você está logado como Super Admin. Pode editar e excluir chamados, alterar funções de usuários e redefinir credenciais.
+                  Você está logado como Admin. Pode editar e excluir chamados, alterar funções de usuários e redefinir credenciais.
                 </p>
               </div>
             </div>
           </div>
 
-          <!-- User Management Table (Super Admin Control) -->
+          <!-- User Management Table (Admin Control) -->
           <div class="bg-dark-card border border-dark-border rounded-2xl p-6">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
               <div>
                 <h3 class="text-base font-bold text-white">Gerenciamento de Usuários e Permissões</h3>
-                <p class="text-xs text-slate-400">Controle quais usuários são Super Admin, Atendentes ou Clientes.</p>
+                <p class="text-xs text-slate-400">Controle quais usuários são Admin ou Atendentes.</p>
               </div>
               <button onclick="App.openNewAttendantModal()" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-semibold flex items-center gap-2">
                 <i data-lucide="plus" class="w-3.5 h-3.5"></i>
@@ -702,7 +702,7 @@
               <h3 id="profileCardName" class="text-xl font-bold text-white">Carlos Silva</h3>
               <div id="profileCardBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 mt-2">
                 <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
-                <span id="profileCardRoleLabel">Super Admin</span>
+                <span id="profileCardRoleLabel">Admin</span>
               </div>
               <div id="profileCardEmail" class="text-xs text-slate-400 mt-2 font-mono">admin@resolveos.com</div>
 
@@ -931,7 +931,7 @@
               <option value="">Sem Atendente</option>
               <option value="Mariana Costa">Mariana Costa</option>
               <option value="Felipe Melo">Felipe Melo</option>
-              <option value="Carlos Silva">Carlos Silva (Super Admin)</option>
+              <option value="Carlos Silva">Carlos Silva (Admin)</option>
             </select>
           </div>
         </div>
@@ -976,7 +976,7 @@
       <div class="p-4 px-6 border-t border-dark-border bg-dark-card/90 flex items-center justify-between">
         <button id="btnDeleteTicketModal" onclick="App.handleDeleteCurrentTicket()" class="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1.5">
           <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-          <span>Excluir Chamado (Super Admin)</span>
+          <span>Excluir Chamado (Admin)</span>
         </button>
         <button onclick="App.closeModal('modalTicketDetails')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold">
           Fechar
@@ -1073,16 +1073,14 @@
           <input type="email" id="newUserEmail" required placeholder="lucas@resolveos.com"
             class="w-full px-3 py-2 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100" />
         </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Nível de Acesso</label>
-            <select id="newUserRole" class="w-full px-3 py-2 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100">
-              <option value="attendant">Atendente</option>
-              <option value="supervisor">Supervisor</option>
-              <option value="superadmin">Super Admin</option>
-              <option value="client">Cliente</option>
-            </select>
-          </div>
+<div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Nível de Acesso</label>
+              <select id="newUserRole" class="w-full px-3 py-2 bg-dark-input border border-dark-border rounded-xl text-sm text-slate-100">
+                <option value="attendant">Atendente</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
           <div>
             <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Departamento</label>
             <input type="text" id="newUserDepartment" value="Suporte Técnico"
@@ -1125,7 +1123,7 @@
           class="w-20 h-20 rounded-full mx-auto object-cover ring-4 ring-blue-500/30" />
         <h4 id="userProfileName" class="text-lg font-bold text-white mt-2">Carlos Silva</h4>
         <div id="userProfileBadge" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 mt-1">
-          Super Admin
+          Admin
         </div>
         <div id="userProfileEmail" class="text-xs text-slate-400 mt-1">admin@resolveos.com</div>
       </div>
@@ -1169,7 +1167,7 @@
       <div class="space-y-3 text-xs sm:text-sm text-slate-300">
         <p><strong>ResolveOS</strong> é a plataforma completa para gerenciamento centralizado de incidentes, chamados e suporte corporativo.</p>
         <div class="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-xs space-y-1">
-          <div class="font-bold text-blue-400">Super Admin (Pré-configurado):</div>
+          <div class="font-bold text-blue-400">Admin (Pré-configurado):</div>
           <div>Usuário: <code class="text-white">admin</code> | Senha: <code class="text-white">123</code></div>
           <div class="text-slate-400">Possui poder pleno para criar, editar, reatribuir e excluir chamados, além de gerenciar todos os atendentes e configurações.</div>
         </div>

@@ -60,7 +60,7 @@ class AuthController {
     });
   }
 
-  /**
+/**
    * Registra novo usuário
    * POST /api/auth/register
    * @param {Object} req - Requisição Express
@@ -68,37 +68,37 @@ class AuthController {
    */
   static register(req, res) {
     const { name, email, username, password, department, phone } = req.body;
-
+ 
     // Valida campos obrigatórios
     if (!name || !email || !password) {
       return res.status(400).json({ error: 'Preencha todos os campos obrigatórios (Nome, E-mail, Senha).' });
     }
-
+ 
     // Verifica se email já existe
     const existingEmail = User.findByUsernameOrEmail(email);
     if (existingEmail) {
       return res.status(400).json({ error: 'Já existe um usuário cadastrado com este e-mail.' });
     }
-
+ 
     // Verifica se username já existe
     const generatedUsername = username || email.split('@')[0];
     const existingUsername = User.findByUsernameOrEmail(generatedUsername);
     if (existingUsername) {
       return res.status(400).json({ error: 'Nome de usuário já em uso. Escolha outro.' });
     }
-
-    // Cria novo usuário como cliente
+ 
+    // Cria novo usuário como atendente (padrão)
     const newUser = User.create({
       name,
       email,
       username: generatedUsername,
       password,
-      role: 'client',
-      roleLabel: 'Cliente',
+      role: 'attendant',
+      roleLabel: 'Atendente',
       department: department || 'Geral',
       phone: phone || ''
     });
-
+ 
     // Gera token para o novo usuário
     const tokenPayload = {
       id: newUser.id,
@@ -110,9 +110,9 @@ class AuthController {
       avatar: newUser.avatar,
       department: newUser.department
     };
-
+ 
     const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '7d' });
-
+ 
     return res.status(201).json({
       message: 'Cadastro realizado com sucesso!',
       token,

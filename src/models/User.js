@@ -74,8 +74,8 @@ class User {
       email: userData.email,
       username: userData.username || userData.email.split('@')[0],
       password: hashedPassword,
-      role: userData.role || 'client',
-      roleLabel: userData.roleLabel || (userData.role === 'superadmin' ? 'Super Admin' : userData.role === 'attendant' ? 'Atendente' : 'Cliente'),
+      role: userData.role || 'attendant',
+      roleLabel: userData.roleLabel || (userData.role === 'admin' ? 'Admin' : 'Atendente'),
       department: userData.department || 'Geral',
       phone: userData.phone || '',
       avatar: userData.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(userData.name)}&backgroundColor=2563eb`
@@ -101,10 +101,8 @@ class User {
     // Atualiza roleLabel se role mudou
     if (updates.role) {
       const labels = {
-        superadmin: 'Super Admin',
-        supervisor: 'Supervisor',
-        attendant: 'Atendente',
-        client: 'Cliente'
+        admin: 'Admin',
+        attendant: 'Atendente'
       };
       updates.roleLabel = labels[updates.role] || updates.role;
     }

@@ -124,8 +124,8 @@ function obterDadosIniciais() {
       name: 'Carlos Silva',
       email: 'admin@resolveos.com',
       password: adminPasswordHash,
-      role: 'superadmin',
-      roleLabel: 'Super Admin',
+      role: 'admin',
+      roleLabel: 'Admin',
       department: 'Tecnologia da Informação',
       phone: '(11) 98765-4321',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=256',
@@ -139,7 +139,7 @@ function obterDadosIniciais() {
       email: 'mariana@resolveos.com',
       password: attendantPasswordHash,
       role: 'attendant',
-      roleLabel: 'Atendente Nível 2',
+      roleLabel: 'Atendente',
       department: 'Suporte Técnico',
       phone: '(11) 97654-3210',
       avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=256',
@@ -153,26 +153,12 @@ function obterDadosIniciais() {
       email: 'felipe@resolveos.com',
       password: attendantPasswordHash,
       role: 'attendant',
-      roleLabel: 'Atendente Nível 1',
+      roleLabel: 'Atendente',
       department: 'Redes e Infra',
       phone: '(11) 96543-2109',
       avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=256',
       status: 'active',
       createdAt: new Date(Date.now() - 20 * 86400000).toISOString()
-    },
-    {
-      id: 'usr_ana',
-      username: 'ana.souza',
-      name: 'Ana Souza',
-      email: 'ana.souza@empresa.com',
-      password: attendantPasswordHash,
-      role: 'client',
-      roleLabel: 'Cliente',
-      department: 'Recursos Humanos',
-      phone: '(11) 95432-1098',
-      avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=256',
-      status: 'active',
-      createdAt: new Date(Date.now() - 15 * 86400000).toISOString()
     }
   ];
 
@@ -369,7 +355,7 @@ function popularDadosIniciais() {
  * Garante que o usuário admin mestre existe
  */
 function garantirUsuarioAdmin() {
-  const admin = db.prepare('SELECT * FROM usuarios WHERE username = ? OR role = ?').get('admin', 'superadmin');
+  const admin = db.prepare('SELECT * FROM usuarios WHERE username = ? OR role = ?').get('admin', 'admin');
   const salt = bcrypt.genSaltSync(10);
   const adminPasswordHash = bcrypt.hashSync('123', salt);
 
@@ -377,7 +363,7 @@ function garantirUsuarioAdmin() {
     db.prepare(`
       INSERT INTO usuarios (id, username, name, email, password, role, roleLabel, department, phone, avatar, status, createdAt)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run('usr_admin', 'admin', 'Carlos Silva', 'admin@resolveos.com', adminPasswordHash, 'superadmin', 'Super Admin', 'Tecnologia da Informação', '(11) 98765-4321', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=256', 'active', new Date().toISOString());
+    `).run('usr_admin', 'admin', 'Carlos Silva', 'admin@resolveos.com', adminPasswordHash, 'admin', 'Admin', 'Tecnologia da Informação', '(11) 98765-4321', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=256', 'active', new Date().toISOString());
   }
 }
 
